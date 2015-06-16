@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,8 +37,10 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	boolean up2 = false;
 	boolean down2 = false;
 	Rectangle ballRect, player1Rect, player2Rect, level2Rect;
+	String winner;
 	JButton play;
 	JButton restart;
+	JButton help;
 	JFrame menu;
 	JFrame gameOver;
 	JPanel menuPanel;
@@ -59,6 +62,8 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 
 	public Game() {
 
+			initGame();
+			
 			gameOver = new JFrame();
 			gameOverPanel = new JPanel();
 			gameOver.setSize(500, 500);
@@ -67,9 +72,8 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			gameOver.setResizable(false);
 			gameOver.addKeyListener(this);
 			restart = new JButton("restart");
-			gameOverLabel = new JLabel("Game Over");
-			gameOverPanel.add(gameOverLabel);
 			gameOverPanel.add(restart);
+			restart.addActionListener(this);
 		
 			menu = new JFrame();
 			menuPanel = new JPanel();
@@ -82,6 +86,12 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			play = new JButton("Play");
 			play.addActionListener(this);
 			menuPanel.add(play);
+			
+			System.out.println();
+			
+			help = new JButton("Help");
+			help.addActionListener(this);
+			menuPanel.add(help);
 					
 			menu.setVisible(true);
 			
@@ -134,14 +144,26 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	public void restart(){
 		p1 = new Player(10, 100, 50, 185, 3, 100);
 		p2 = new Player(10, 100, 450, 185, 3, 100);
+
+		player1Rect = new Rectangle(p1.x, p1.y, p1.width, p1.height);
+		player2Rect = new Rectangle(p2.x, p2.y, p2.width, p2.height);
+		
+		BallObjects.removeAll(BallObjects);
+		BallObjects.add(new Ball(20, 20, 300, 300, 2));
+	}
+	
+	public void endGameWindow(){
+		gameOverPanel.removeAll();
+		//gameOverPanel = new JPanel();
+		//gameOver.add(gameOverPanel);
+		gameOverLabel = new JLabel(winner  + " wins!");
+		gameOverPanel.add(gameOverLabel);
+		gameOverPanel.add(restart);
+		currentstate = gameoverstate;
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
 		
-		if(arg0.getSource()==restart){
-			currentstate = menustate;
-			
-		}
 		
 		if(currentstate!=menustate){
 			menu.setVisible(false);
@@ -153,9 +175,18 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		}else
 			gameOver.setVisible(true);
 		
+		if(currentstate!=gamestate){
+			frame.setVisible(false);
+		}else
+			frame.setVisible(true);
+		
 		if(arg0.getSource()==play){
 			currentstate = gamestate;
-			initGame();
+		}
+		
+		if(arg0.getSource()==restart){
+			restart();
+			currentstate = gamestate;
 		}
 		
 		counter++;
@@ -211,21 +242,19 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			}
 
 		}
+		
 		if(currentstate == gamestate){
 			if(p1.health<=0){
-				System.out.println("Player 2 wins!");
-				currentstate = gameoverstate;
+				winner = "Player 2";
+				endGameWindow();
 			}
 			
-		}
-		if(currentstate == gamestate){
 			if(p2.health<=0){
-				System.out.println("Player 1 wins!");
-				currentstate = gameoverstate;
-			
+				winner = "Player 1";
+				endGameWindow();
 			}
-		
 		}
+		
 		
 		if (up) {
 			p1.moveUp();
