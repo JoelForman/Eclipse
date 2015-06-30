@@ -31,6 +31,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	int menustate = 0;
 	int gamestate = 1;
 	int gameoverstate = 2;
+	int helpstate = 3;
 	int currentstate = 0;
 	boolean up = false;
 	boolean down = false;
@@ -41,7 +42,11 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	JButton play;
 	JButton restart;
 	JButton help;
+	JButton back;
+	JButton mainMenu;
 	JFrame menu;
+	JFrame helpFrame;
+	JPanel helpPanel;
 	JFrame gameOver;
 	JPanel menuPanel;
 	JPanel gameOverPanel;
@@ -50,6 +55,18 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	Player p2;
 	Ball ball;
 	Ball level2;
+	String TutorialText = 
+			"<html>How to play:"
+			+ "<br><br>Player 1 can use W and S to"
+			+ "<br>move their paddle. Player 2 can"
+			+ "<br>use the UP and DOWN arrow keys."
+			+ "<br>The object of the game is to"
+			+ "<br>prevent your side to be hit with"
+			+ "<br>the ball(s). If this happens, your"
+			+ "<br>health will be reduced by 10."
+			+ "<br>The first player to have their"
+			+ "<br>health reduced to zero loses."
+			+ "</html>";
 	Random r1 = new Random();
 	Random r2 = new Random();
 	int randomX;
@@ -83,6 +100,21 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			menu.addKeyListener(this);
 					
+			helpFrame = new JFrame();
+			helpPanel = new JPanel();
+			helpFrame.add(helpPanel);
+			helpPanel.add(new JLabel(TutorialText));
+			helpFrame.setSize(500, 500);
+			helpFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			helpFrame.addKeyListener(this);
+			
+			back = new JButton("back");
+			back.addActionListener(this);
+			helpPanel.add(back);
+			
+			mainMenu = new JButton("Main Menu");
+			mainMenu.addActionListener(this);
+			
 			play = new JButton("Play");
 			play.addActionListener(this);
 			menuPanel.add(play);
@@ -99,11 +131,9 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 
 		p1 = new Player(10, 100, 50, 185, 3, 100);
 		p2 = new Player(10, 100, 450, 185, 3, 100);
-		BallObjects.add(new Ball(20, 20, 300, 300, 2));
 
 		player1Rect = new Rectangle(p1.x, p1.y, p1.width, p1.height);
 		player2Rect = new Rectangle(p2.x, p2.y, p2.width, p2.height);
-
 		timer = new Timer(1000 / 60, this);
 		timer.start();
 	}
@@ -159,11 +189,23 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		gameOverLabel = new JLabel(winner  + " wins!");
 		gameOverPanel.add(gameOverLabel);
 		gameOverPanel.add(restart);
+		gameOverPanel.add(mainMenu);
 		currentstate = gameoverstate;
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
 		
+		if(arg0.getSource()==help){
+			currentstate = helpstate;
+		}
+		
+		if(arg0.getSource()==mainMenu){
+			currentstate = menustate;
+		}
+		
+		if(arg0.getSource()==back){
+			currentstate=menustate;
+		}
 		
 		if(currentstate!=menustate){
 			menu.setVisible(false);
@@ -180,8 +222,14 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		}else
 			frame.setVisible(true);
 		
+		if(currentstate!=helpstate){
+			helpFrame.setVisible(false);
+		}else
+			helpFrame.setVisible(true);
+		
 		if(arg0.getSource()==play){
 			currentstate = gamestate;
+			BallObjects.add(new Ball(20, 20, 300, 300, 2));
 		}
 		
 		if(arg0.getSource()==restart){
@@ -195,7 +243,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		{
 			b.update();
 		}
-		if (counter==500) {
+		if (counter==500 && currentstate==gamestate) {
 			BallObjects.add(new Ball(20, 20, 200, 200, 2));
 			counter=0;
 		}
@@ -206,7 +254,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 
 				b.yVel *= -1;
 			}
-
+			
 			if (b.collisionBox.intersects(player2Rect)
 					|| b.collisionBox.intersects(player1Rect)) {
 
