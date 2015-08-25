@@ -17,6 +17,14 @@ import javax.swing.Timer;
 
 public class Game extends JPanel implements ActionListener, KeyListener {
 
+	
+	Rectangle topP1Box;
+	Rectangle bottomP1Box;
+	Rectangle topP2Box;
+	Rectangle bottomP2Box;
+	
+	
+	
 	JFrame frame;
 	Timer timer;
 	int x = 10;
@@ -133,7 +141,11 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		p2 = new Player(10, 100, 450, 185, 3, 100);
 
 		player1Rect = new Rectangle(p1.x, p1.y, p1.width, p1.height);
+		topP1Box = new Rectangle(p1.x, p1.y, p1.width, 10);
+		bottomP1Box = new Rectangle(p1.x, p1.y+p1.height, p1.width, 10);
 		player2Rect = new Rectangle(p2.x, p2.y, p2.width, p2.height);
+		topP2Box = new Rectangle(p2.x, p2.y, p2.width, 10);
+		bottomP2Box = new Rectangle(p2.x, p2.y+p2.height, p2.width, 10);
 		timer = new Timer(1000 / 60, this);
 		timer.start();
 	}
@@ -172,14 +184,34 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	public void restart(){
+		counter = 0;
 		p1 = new Player(10, 100, 50, 185, 3, 100);
 		p2 = new Player(10, 100, 450, 185, 3, 100);
 
 		player1Rect = new Rectangle(p1.x, p1.y, p1.width, p1.height);
+		topP1Box = new Rectangle(p1.x, p1.y, p1.width, 10);
+		bottomP1Box = new Rectangle(p1.x, p1.y+p1.height, p1.width, 10);
 		player2Rect = new Rectangle(p2.x, p2.y, p2.width, p2.height);
+		topP2Box = new Rectangle(p2.x, p2.y, p2.width, 10);
+		bottomP2Box = new Rectangle(p2.x, p2.y+p2.height, p2.width, 10);
 		
 		BallObjects.removeAll(BallObjects);
 		BallObjects.add(new Ball(20, 20, 300, 300, 2));
+	}
+	
+	public void MainMenuRestart(){
+		counter = 0;
+		p1 = new Player(10, 100, 50, 185, 3, 100);
+		p2 = new Player(10, 100, 450, 185, 3, 100);
+
+		player1Rect = new Rectangle(p1.x, p1.y, p1.width, p1.height);
+		topP1Box = new Rectangle(p1.x, p1.y, p1.width, 10);
+		bottomP1Box = new Rectangle(p1.x, p1.y+p1.height, p1.width, 10);
+		player2Rect = new Rectangle(p2.x, p2.y, p2.width, p2.height);
+		topP2Box = new Rectangle(p2.x, p2.y, p2.width, 10);
+		bottomP2Box = new Rectangle(p2.x+10, p2.y+p2.height, p2.width, 10);
+		
+		BallObjects.removeAll(BallObjects);
 	}
 	
 	public void endGameWindow(){
@@ -194,6 +226,8 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
+		
+		//System.out.println(topP1Box.x + ", " + topP1Box.y + "     " + p1.x + ", " + p1.y);
 		
 		if(arg0.getSource()==help){
 			currentstate = helpstate;
@@ -229,6 +263,7 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		
 		if(arg0.getSource()==play){
 			currentstate = gamestate;
+			MainMenuRestart();
 			BallObjects.add(new Ball(20, 20, 300, 300, 2));
 		}
 		
@@ -236,14 +271,15 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			restart();
 			currentstate = gamestate;
 		}
-		
+		if(currentstate == gamestate){
 		counter++;
+		}
 		
 		for(Ball b: BallObjects)
 		{
 			b.update();
 		}
-		if (counter==500 && currentstate==gamestate) {
+		if (counter==500) {
 			BallObjects.add(new Ball(20, 20, 200, 200, 2));
 			counter=0;
 		}
@@ -257,11 +293,20 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 			
 			if (b.collisionBox.intersects(player2Rect)
 					|| b.collisionBox.intersects(player1Rect)) {
-
+				
 				if(b.speed<4){
 					b.speed += 1;
 				}
 				b.xVel *= -1;
+			}
+			
+			if(b.collisionBox.intersects(topP1Box) 
+					|| b.collisionBox.intersects(bottomP1Box) 
+					|| b.collisionBox.intersects(topP2Box) 
+					|| b.collisionBox.intersects(bottomP2Box)){
+				b.yVel *= -1;
+				b.xVel *= -1;
+				//System.out.println("Collision" + "  " + b.x + ",  " + b.y + "     " + topP1Box.x + ",  " + topP1Box.y);
 			}
 
 			if (b.collisionBox.x >= 500 - 20) {
@@ -307,18 +352,26 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 		if (up) {
 			p1.moveUp();
 			player1Rect.y -= p1.speed;
+			topP1Box.y -= p1.speed;
+			bottomP1Box.y -= p1.speed;
 		}
 		if (down) {
 			p1.moveDown();
 			player1Rect.y += p1.speed;
+			topP1Box.y += p1.speed;
+			bottomP1Box.y += p1.speed;
 		}
 		if (up2) {
 			p2.moveUp();
 			player2Rect.y -= p1.speed;
+			topP2Box.y -= p1.speed;
+			bottomP2Box.y -= p1.speed;
 		}
 		if (down2) {
 			p2.moveDown();
 			player2Rect.y += p1.speed;
+			topP2Box.y += p1.speed;
+			bottomP2Box.y += p1.speed;
 		}
 
 
