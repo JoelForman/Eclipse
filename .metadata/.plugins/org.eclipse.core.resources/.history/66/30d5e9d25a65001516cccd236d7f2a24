@@ -1,0 +1,29 @@
+import java.util.Stack;
+
+
+public class StackBot {
+	
+	final int NORTH = 0;
+	final int SOUTH = 1;
+	final int EAST = 2;
+	final int WEST = 3;
+	
+	Stack<String> instructions = new Stack<String>();
+	Stack<Integer> distance = new Stack<Integer>();
+	Stack<String> direction = new Stack<String>();
+	
+	public static void main(String[] args){
+		new StackBot();
+	}
+	
+	public StackBot(){
+		instructions.push("34.2m W");
+		instructions.push("34.2m N");
+		instructions.push("34.2m S");
+		direction.push(Character.toString(instructions.pop().charAt(6)));
+		direction.push(Character.toString(instructions.pop().charAt(6)));
+		direction.push(Character.toString(instructions.pop().charAt(6)));
+		
+	}
+	
+}

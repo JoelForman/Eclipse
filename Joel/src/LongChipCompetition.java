@@ -18,10 +18,27 @@ public class LongChipCompetition {
 	public LongChipCompetition(){
 		
 		initializeBeatles();
-		for(int i = 0; i<theBeatles.size(); i++){
+		ArrayList<Chip> chips;
 		
+		for(int i = 0; i<theBeatles.size(); i++){
+			chips = theBeatles.get(i).getChips();
+			chips.get(i).getLength();
+			if(i==3)
+			System.out.println(theBeatles.get(calculateChips(chips)).getName());
+			
 		}
 		
+	}
+	
+	public int calculateChips(ArrayList<Chip> chips){
+		if(chips.get(0).getLength()>chips.get(1).getLength() && chips.get(0).getLength()>chips.get(2).getLength() && chips.get(0).getLength()>chips.get(3).getLength()){
+			return 0;
+		} else if(chips.get(1).getLength()>chips.get(0).getLength() && chips.get(1).getLength()>chips.get(2).getLength() && chips.get(1).getLength()>chips.get(3).getLength()){
+			return 1;
+		} else if(chips.get(2).getLength()>chips.get(0).getLength() && chips.get(2).getLength()>chips.get(1).getLength() && chips.get(2).getLength()>chips.get(3).getLength()){
+			return 2;
+		} else
+			return 3;
 	}
 	
 	private ArrayList<Beatle> theBeatles = new ArrayList<Beatle>();
