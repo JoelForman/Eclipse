@@ -1,0 +1,65 @@
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Stack;
+
+
+public class StackBot {
+	
+	String distance, values, direction;
+	final String NORTH = "North";
+	final String SOUTH = "South";
+	final String EAST = "East";
+	final String WEST = "West";
+	
+	Stack<String> instructions = new Stack<String>();
+	
+	public static void main(String[] args){
+		new StackBot();
+	}
+	
+	public StackBot(){
+		//instructions.push("34.2m W");
+		
+		try {
+			
+			FileReader fr = new FileReader("/Users/Guest/Desktop/Eclipse/Joel/src/stackbot.txt");
+			
+			int counter = 0;
+			char c;
+			String line = "";
+			while((c = (char) fr.read())!=(char)-1){
+				
+				line += c;
+				counter++;
+				if(counter%8==0){
+					instructions.push(line);
+					values = instructions.pop();
+					distance = values.substring(0, 4);
+					direction = values.substring(6);
+					System.out.println("The robot goes " + distance + " meters " + checkDirection());
+				}
+
+			}
+		}
+			 catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public String checkDirection(){
+		if(direction.equals("W")){
+			return WEST;
+		}else if(direction.equals("E")){
+			return EAST;
+		}else if(direction.equals("N")){
+			return NORTH;
+		}else if(direction.equals("S")){
+			return SOUTH;
+		}else
+			return "error";
+	}
+	
+}
